@@ -1,0 +1,28 @@
+<configuration>
+    <!-- Консольный аппендер -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- Кастомный паттерн: дата, класс, сообщение -->
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%logger{0}] - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Root logger по умолчанию -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- Логирование для dev профиля -->
+    <springProfile name="dev">
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <!-- Логирование для prod профиля -->
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>

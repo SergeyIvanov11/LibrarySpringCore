@@ -1,13 +1,69 @@
 package com.example.libraryspringcore;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import com.example.libraryspringcore.config.LoanBeanPostProcessor;
+import com.example.libraryspringcore.config.LoanConfiguration;
+import com.example.libraryspringcore.config.StarterLogger;
+import com.example.libraryspringcore.dto.Book;
+import com.example.libraryspringcore.dto.Enum.Type;
+import com.example.libraryspringcore.dto.Loan;
+import com.example.libraryspringcore.dto.Reader;
+import com.example.libraryspringcore.repository.BookRepository;
+import com.example.libraryspringcore.repository.ReaderRepository;
+import com.example.libraryspringcore.service.LoanService;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-@SpringBootApplication
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+
 public class LibrarySpringCoreApplication {
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        System.setOut(new PrintStream(System.out, true, "UTF-8"));
+        AnnotationConfigApplicationContext context =
+                new AnnotationConfigApplicationContext();
 
-    public static void main(String[] args) {
-        SpringApplication.run(LibrarySpringCoreApplication.class, args);
+          context.getEnvironment().setActiveProfiles("dev");
+        //   context.getEnvironment().setActiveProfiles("prod");
+
+
+        context.register(LoanConfiguration.class, LoanBeanPostProcessor.class, LoanService.class, StarterLogger.class);
+        context.refresh();
+        System.out.println("Активные профили: " + Arrays.toString(context.getEnvironment().getActiveProfiles()));
+
+        LoanService loanService = context.getBean(LoanService.class);
+        BookRepository bookRepository = context.getBean(BookRepository.class);
+        ReaderRepository readerRepository = context.getBean(ReaderRepository.class);
+
+        Book book1 = new Book();
+        book1.setId(1L);
+        book1.setTitle("Война и мир");
+        book1.setAuthor("Лев Толстой");
+        book1.setAvailable(true);
+        bookRepository.save(book1);
+
+        Book book2 = new Book();
+        book2.setId(2L);
+        book2.setTitle("Муму");
+        book2.setAuthor("Иван Тургенев");
+        book2.setAvailable(true);
+        bookRepository.save(book2);
+
+        Reader reader1 = new Reader();
+        reader1.setId(1L);
+        reader1.setName("Петя");
+        reader1.setType(Type.REGULAR);
+        readerRepository.save(reader1);
+
+        Reader reader2 = new Reader();
+        reader2.setId(2L);
+        reader2.setName("Люда");
+        reader2.setType(Type.VIP);
+        readerRepository.save(reader2);
+
+        Loan loan1 = loanService.loanBook(1L, 1L);
+        Loan loan2 = loanService.loanBook(2L, 2L);
+
+        context.close();
     }
 
 }
