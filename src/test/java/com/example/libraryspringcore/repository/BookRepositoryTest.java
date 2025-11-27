@@ -1,10 +1,8 @@
 package com.example.libraryspringcore.repository;
 
 import com.example.libraryspringcore.dto.Book;
-import com.example.libraryspringcore.service.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Optional;
 
@@ -12,12 +10,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BookRepositoryTest {
     private BookRepository bookRepository;
-    private NotificationService notificationService;
 
     @BeforeEach
     void setUp() {
-        notificationService = Mockito.mock(NotificationService.class);
-        bookRepository = new BookRepository(notificationService);
+        bookRepository = new BookRepository();
     }
 
     @Test
@@ -33,8 +29,6 @@ class BookRepositoryTest {
         Optional<Book> found = bookRepository.findById(1L);
         assertTrue(found.isPresent());
         assertEquals("Title", found.get().getTitle());
-
-        Mockito.verify(notificationService).notify("Сохраняем книгу с id: 1");
     }
 
     @Test

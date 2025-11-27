@@ -1,12 +1,10 @@
 package com.example.libraryspringcore.config;
 
 import com.example.libraryspringcore.dto.Loan;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 
 @Configuration
+@EnableAspectJAutoProxy
 @ComponentScan("com.example.libraryspringcore")
 public class LoanConfiguration {
 

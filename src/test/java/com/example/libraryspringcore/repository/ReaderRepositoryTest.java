@@ -1,10 +1,8 @@
 package com.example.libraryspringcore.repository;
 
 import com.example.libraryspringcore.dto.Reader;
-import com.example.libraryspringcore.service.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Optional;
 
@@ -12,12 +10,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ReaderRepositoryTest {
     private ReaderRepository readerRepository;
-    private NotificationService notificationService;
 
     @BeforeEach
     void setUp() {
-        notificationService = Mockito.mock(NotificationService.class);
-        readerRepository = new ReaderRepository(notificationService);
+        readerRepository = new ReaderRepository();
     }
 
     @Test
@@ -31,8 +27,6 @@ class ReaderRepositoryTest {
         Optional<Reader> found = readerRepository.findById(1L);
         assertTrue(found.isPresent());
         assertEquals("John", found.get().getName());
-
-        Mockito.verify(notificationService).notify("Сохраняем читателя с id: 1");
     }
 
     @Test

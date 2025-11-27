@@ -22,7 +22,6 @@ class LoanServiceTest {
     private BookRepository bookRepository;
     private ReaderRepository readerRepository;
     private LoanRepository loanRepository;
-    private NotificationService notificationService;
     private ObjectProvider<Loan> loanProvider;
 
     @BeforeEach
@@ -30,9 +29,8 @@ class LoanServiceTest {
         bookRepository = mock(BookRepository.class);
         readerRepository = mock(ReaderRepository.class);
         loanRepository = mock(LoanRepository.class);
-        notificationService = mock(NotificationService.class);
         loanProvider = mock(ObjectProvider.class);
-        loanService = new LoanService(bookRepository, readerRepository, loanRepository, notificationService, loanProvider);
+        loanService = new LoanService(bookRepository, readerRepository, loanRepository, loanProvider);
     }
 
     @Test
@@ -58,7 +56,6 @@ class LoanServiceTest {
         assertFalse(book.isAvailable());
 
         verify(loanRepository).add(loan);
-        verify(notificationService).notify("Заем с книгой Java и читателем John создан");
     }
 
     @Test
@@ -81,6 +78,5 @@ class LoanServiceTest {
 
         assertTrue(book.isAvailable());
         verify(loanRepository).delete(loan);
-        verify(notificationService).notify("Книга c id1 возвращена читателем с id2");
     }
 }

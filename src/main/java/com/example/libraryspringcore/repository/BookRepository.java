@@ -1,8 +1,7 @@
 package com.example.libraryspringcore.repository;
 
+import com.example.libraryspringcore.config.NotifyInLog;
 import com.example.libraryspringcore.dto.Book;
-import com.example.libraryspringcore.dto.Reader;
-import com.example.libraryspringcore.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -14,19 +13,17 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Repository
 public class BookRepository {
     private final List<Book> books = new CopyOnWriteArrayList<>();
-    private final NotificationService notificationService;
 
+    @NotifyInLog("Сохраняем книгу {0}")
     public Book save(Book book) {
         if(findById(book.getId()).isPresent()){
             throw new IllegalStateException("Книга уже сохранена в базе");
         }
         books.add(book);
-        notificationService.notify("Сохраняем книгу с id: " + book.getId());
         return book;
     }
-
+    @NotifyInLog("Ищем книгу с id: {0}")
     public Optional<Book> findById(Long id) {
-        notificationService.notify("Ищем книгу с id: " + id);
         return books.stream()
                 .filter(b -> Objects.equals(b.getId(), id))
                 .findFirst();

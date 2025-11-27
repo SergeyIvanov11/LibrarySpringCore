@@ -1,5 +1,6 @@
 package com.example.libraryspringcore.service;
 
+import com.example.libraryspringcore.config.NotifyInLog;
 import com.example.libraryspringcore.dto.Book;
 import com.example.libraryspringcore.dto.Loan;
 import com.example.libraryspringcore.dto.Reader;
@@ -20,9 +21,9 @@ public class LoanService {
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
     private final LoanRepository loanRepository;
-    private final NotificationService notificationService;
     private final ObjectProvider<Loan> loanProvider; // для получения прототипа
 
+    @NotifyInLog("Заем с книгой {0} и читателем {1} создан")
     public Loan loanBook(Long bookId, Long readerId) {
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new IllegalStateException("Книга не найдена с id: " + bookId));
@@ -36,12 +37,10 @@ public class LoanService {
 
         loanRepository.add(loan);
         book.setAvailable(false);
-
-        notificationService.notify(String.format("Заем с книгой %s и читателем %s создан", book.getTitle(), reader.getName()));
-
         return loan;
     }
 
+    @NotifyInLog("Книга c id {0} возвращена читателем с id {1}")
     public void returnBook(Long bookId, Long readerId) {
         List<Loan> loans = loanRepository.findByBook(bookId);
 
@@ -54,8 +53,6 @@ public class LoanService {
         Book book = target.getBook();
         book.setAvailable(true);
         loanRepository.delete(target);
-
-        notificationService.notify(String.format("Книга c id%d возвращена читателем с id%d", bookId, readerId));
     }
 
 }
