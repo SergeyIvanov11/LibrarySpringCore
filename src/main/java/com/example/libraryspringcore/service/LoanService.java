@@ -17,12 +17,12 @@ import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
-public class LoanService {
+public class LoanService implements LoanServiceInterface{
     private final BookRepository bookRepository;
     private final ReaderRepository readerRepository;
     private final LoanRepository loanRepository;
     private final ObjectProvider<Loan> loanProvider; // для получения прототипа
-
+    @Override
     @NotifyInLog("Заем с книгой {0} и читателем {1} создан")
     public Loan loanBook(Long bookId, Long readerId) {
         Book book = bookRepository.findById(bookId)
@@ -39,7 +39,7 @@ public class LoanService {
         book.setAvailable(false);
         return loan;
     }
-
+    @Override
     @NotifyInLog("Книга c id {0} возвращена читателем с id {1}")
     public void returnBook(Long bookId, Long readerId) {
         List<Loan> loans = loanRepository.findByBook(bookId);

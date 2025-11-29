@@ -12,5 +12,6 @@ public class NotificationService {
 
     public void notify(String msg) {
         log.info(msg);
+     //   log.debug("123");
     }
 }

@@ -4,8 +4,7 @@ import com.example.libraryspringcore.dto.Loan;
 import org.springframework.context.annotation.*;
 
 @Configuration
-@EnableAspectJAutoProxy
-@ComponentScan("com.example.libraryspringcore")
+@EnableAspectJAutoProxy(proxyTargetClass = false) // false => JDK dynamic proxies
 public class LoanConfiguration {
 
     @Bean(initMethod = "init")

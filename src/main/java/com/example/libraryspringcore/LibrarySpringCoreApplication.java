@@ -10,6 +10,8 @@ import com.example.libraryspringcore.dto.Reader;
 import com.example.libraryspringcore.repository.BookRepository;
 import com.example.libraryspringcore.repository.ReaderRepository;
 import com.example.libraryspringcore.service.LoanService;
+import com.example.libraryspringcore.service.LoanServiceInterface;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.PrintStream;
@@ -19,18 +21,27 @@ import java.util.Arrays;
 public class LibrarySpringCoreApplication {
     public static void main(String[] args) throws UnsupportedEncodingException {
         System.setOut(new PrintStream(System.out, true, "UTF-8"));
+
+          String profile = System.getProperty("app.profile", "dev");
+       // String profile = System.getProperty("app.profile", "prod");
+
+        System.setProperty("logback.configurationFile",
+                "logback-" + profile + ".xml");
+
         AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext();
+                new AnnotationConfigApplicationContext("com.example.libraryspringcore");
+        context.getEnvironment().setActiveProfiles(profile);
 
-          context.getEnvironment().setActiveProfiles("dev");
-        //   context.getEnvironment().setActiveProfiles("prod");
-
-
-        context.register(LoanConfiguration.class, LoanBeanPostProcessor.class, LoanService.class, StarterLogger.class);
-        context.refresh();
         System.out.println("Активные профили: " + Arrays.toString(context.getEnvironment().getActiveProfiles()));
 
-        LoanService loanService = context.getBean(LoanService.class);
+        LoanServiceInterface loanService = context.getBean(LoanServiceInterface.class);
+
+        System.out.println(loanService.getClass());
+        System.out.println("Прокси класс: " + loanService.getClass());
+        System.out.println("Это CGLIB: " + (AopUtils.isCglibProxy(loanService) ? "да" : "нет"));
+        System.out.println("Это JDK Proxy: " + (AopUtils.isJdkDynamicProxy(loanService)? "да" : "нет"));
+
+        /*
         BookRepository bookRepository = context.getBean(BookRepository.class);
         ReaderRepository readerRepository = context.getBean(ReaderRepository.class);
 
@@ -62,7 +73,7 @@ public class LibrarySpringCoreApplication {
 
         Loan loan1 = loanService.loanBook(1L, 1L);
         Loan loan2 = loanService.loanBook(2L, 2L);
-
+*/
         context.close();
     }
 
